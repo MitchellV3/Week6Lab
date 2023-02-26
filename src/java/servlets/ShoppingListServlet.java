@@ -59,18 +59,28 @@ public class ShoppingListServlet extends HttpServlet {
             throws ServletException, IOException {
                    HttpSession session = request.getSession(false);
         
+                           
+        String logout = request.getParameter("logout");
+        if (logout != null) {
+              session.invalidate();
+              request.setAttribute("message", "You have successfully logged out.");
+              getServletContext().getRequestDispatcher("/WEB-INF/register.jsp")
+                .forward(request, response);
+            }
+                   
         if(session != null && session.getAttribute("username") != null) {
             String username = (String) session.getAttribute("username");
             
             // show list page with welcome message
-            request.setAttribute("welcomeMessage", "Welcome, " + username);
+            session.setAttribute("welcomeMessage", "Welcome back, " + username);
             getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
                .forward(request, response);
         } else {
-            // session does not exist or username is not set, redirect to registration page
+            // session does not exist or username is not set, forward to registration page
             getServletContext().getRequestDispatcher("/WEB-INF/register.jsp")
                .forward(request, response);
         }
+
     }
 
     /**
@@ -91,14 +101,14 @@ public class ShoppingListServlet extends HttpServlet {
 
                 // store the username in a session variable
                 session.setAttribute("username", username);
-
+                session.setAttribute("welcomeMessage", "Welcome, " + username);
                 // redirect to home 
                         getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
                 .forward(request, response);
             }
     else {
         // username or password is empty, display an error message and forward to login.jsp
-        request.setAttribute("errorMessage", "Please enter username and password");
+        request.setAttribute("errorMessage", "Please enter username");
         request.setAttribute("username", username);
         getServletContext().getRequestDispatcher("/WEB-INF/register.jsp")
                 .forward(request, response);

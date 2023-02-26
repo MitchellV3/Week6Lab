@@ -13,6 +13,7 @@
     </head>
     <body>
         <h1>Shopping List</h1>
-        <p>${welcomeMessage}</p>
+        <p>${welcomeMessage}</p><br>
+        <a href="ShoppingList?logout">Log out</a>
     </body>
 </html>
