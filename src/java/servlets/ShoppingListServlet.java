@@ -7,6 +7,7 @@ package servlets;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +46,8 @@ public class ShoppingListServlet extends HttpServlet {
         }
     }
 
+    protected ArrayList<String> items = new ArrayList<String>();       
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -59,7 +62,7 @@ public class ShoppingListServlet extends HttpServlet {
             throws ServletException, IOException {
                    HttpSession session = request.getSession(false);
         
-                           
+        session.setAttribute("items", items);
         String logout = request.getParameter("logout");
         if (logout != null) {
               session.invalidate();
@@ -70,7 +73,7 @@ public class ShoppingListServlet extends HttpServlet {
                    
         if(session != null && session.getAttribute("username") != null) {
             String username = (String) session.getAttribute("username");
-            
+               
             // show list page with welcome message
             session.setAttribute("welcomeMessage", "Welcome back, " + username);
             getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
@@ -102,17 +105,22 @@ public class ShoppingListServlet extends HttpServlet {
                 // store the username in a session variable
                 session.setAttribute("username", username);
                 session.setAttribute("welcomeMessage", "Welcome, " + username);
-                // redirect to home 
+                // forward
                         getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
                 .forward(request, response);
             }
     else {
-        // username or password is empty, display an error message and forward to login.jsp
+        // username is empty, display an error message and forward to login.jsp
         request.setAttribute("errorMessage", "Please enter username");
         request.setAttribute("username", username);
         getServletContext().getRequestDispatcher("/WEB-INF/register.jsp")
                 .forward(request, response);
     }
+        int count = items.size();
+        String addItem = request.getParameter("addItem");
+        if(addItem != null && !addItem.isEmpty()){
+            items.add(addItem);
+        }
     }
 
     /**
