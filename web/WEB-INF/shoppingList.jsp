@@ -15,19 +15,19 @@
     <body>
         <h1>Shopping List</h1>
         <p>${welcomeMessage}</p>
-        <a href="ShoppingList?logout">Log out</a>
+        <a href="?action=logout">Log out</a>
         <h2>List</h2>
-        <form method="post" action="">
-        <label for="username">Add item:</label>
+        <form method="post" action="?action=addItem">
+            <label for="username">Add item:</label>
             <input type="text" name="addItem" id="addItem">
-          <input type="submit" value="Add">
-          <br>
-          <br>
-              <c:forEach var="items" items="$(items)">
-                  <input type="radio" name="selectItem" value="${items}">
-                      ${items}
-              </c:forEach>
-         </form>
-        
+            <input type="submit" value="Add">
+            <br>
+            <br>
+            <c:forEach var="item" items="${items}">
+                <input type="radio" name="selectItem" id="selectItem" value="${item}">
+                <label for="selectItem">${item}</label><br>
+            </c:forEach>
+        </form>
+
     </body>
 </html>

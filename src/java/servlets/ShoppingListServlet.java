@@ -37,7 +37,7 @@ public class ShoppingListServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ShoppingListServlet</title>");            
+            out.println("<title>Servlet ShoppingListServlet</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet ShoppingListServlet at " + request.getContextPath() + "</h1>");
@@ -46,8 +46,6 @@ public class ShoppingListServlet extends HttpServlet {
         }
     }
 
-    protected ArrayList<String> items = new ArrayList<String>();       
-    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
@@ -60,30 +58,34 @@ public class ShoppingListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-                   HttpSession session = request.getSession(false);
-        
-        session.setAttribute("items", items);
-        String logout = request.getParameter("logout");
-        if (logout != null) {
-              session.invalidate();
-              request.setAttribute("message", "You have successfully logged out.");
-              getServletContext().getRequestDispatcher("/WEB-INF/register.jsp")
-                .forward(request, response);
-            }
-                   
-        if(session != null && session.getAttribute("username") != null) {
-            String username = (String) session.getAttribute("username");
-               
+        HttpSession session = request.getSession(false);
+        String username = (String) session.getAttribute("username");
+        String action = request.getParameter("action");
+
+        if (action != null && action.equals("logout")) {
+            session.invalidate();
+            request.setAttribute("message", "You have successfully logged out.");
+            getServletContext().getRequestDispatcher("/WEB-INF/register.jsp")
+                    .forward(request, response);
+        }
+
+        if (session != null && username != null) {
             // show list page with welcome message
             session.setAttribute("welcomeMessage", "Welcome back, " + username);
             getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
-               .forward(request, response);
+                    .forward(request, response);
         } else {
             // session does not exist or username is not set, forward to registration page
             getServletContext().getRequestDispatcher("/WEB-INF/register.jsp")
-               .forward(request, response);
+                    .forward(request, response);
         }
-
+        ArrayList<String> items = (ArrayList<String>) session.getAttribute("items");
+        if (items == null) {
+            items = new ArrayList<String>();
+            session.setAttribute("items", items);
+            getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
+                    .forward(request, response);
+        }
     }
 
     /**
@@ -97,30 +99,39 @@ public class ShoppingListServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
         String username = request.getParameter("username");
-        if(username != null && !username.isEmpty()) {
-            
-                HttpSession session = request.getSession();
+        String action = request.getParameter("action");
 
+        if (action.equals("register")) {
+            if (username != null && !username.isEmpty()) {
                 // store the username in a session variable
                 session.setAttribute("username", username);
                 session.setAttribute("welcomeMessage", "Welcome, " + username);
                 // forward
-                        getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
-                .forward(request, response);
+                getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
+                        .forward(request, response);
+            } else {
+                // username is empty, display an error message and forward to login.jsp
+                request.setAttribute("errorMessage", "Please enter username");
+                request.setAttribute("username", username);
+                getServletContext().getRequestDispatcher("/WEB-INF/register.jsp")
+                        .forward(request, response);
             }
-    else {
-        // username is empty, display an error message and forward to login.jsp
-        request.setAttribute("errorMessage", "Please enter username");
-        request.setAttribute("username", username);
-        getServletContext().getRequestDispatcher("/WEB-INF/register.jsp")
-                .forward(request, response);
-    }
-        int count = items.size();
-        String addItem = request.getParameter("addItem");
-        if(addItem != null && !addItem.isEmpty()){
-            items.add(addItem);
+
+        } else if (action.equals("addItem")) {
+            String addItem = request.getParameter("addItem");
+            if (addItem != null && !addItem.isEmpty()) {
+                ArrayList<String> items = (ArrayList<String>) session.getAttribute("items");
+               
+
+                items.add(addItem);
+                session.setAttribute("items", items);
+                getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
+                        .forward(request, response);
+            }
         }
+
     }
 
     /**

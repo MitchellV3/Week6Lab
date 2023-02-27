@@ -13,8 +13,8 @@
     </head>
     <body>
         <h1>Shopping List</h1>
-        <br>
-        <form method="post" action="ShoppingList">
+        <p name="message">${message}</p>
+        <form method="post" action="?action=register">
           <label for="username">Username:</label>
             <input type="text" name="username" id="username"><br>
             <br>
