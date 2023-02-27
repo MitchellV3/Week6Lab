@@ -17,17 +17,22 @@
         <p>${welcomeMessage}</p>
         <a href="?action=logout">Log out</a>
         <h2>List</h2>
-                    <p style="color:red;">${errorMessage}</p>
+        <p style="color:red;">${errorMessage}</p>
         <form method="post" action="?action=addItem">
             <label for="username">Add item:</label>
             <input type="text" name="addItem" id="addItem">
             <input type="submit" value="Add">
             <br>
             <br>
+            </form>
+        <form method="post" action="?action=delete">
             <c:forEach var="item" items="${items}">
                 <input type="radio" name="selectItem" id="selectItem" value="${item}">
                 <label for="selectItem">${item}</label><br>
             </c:forEach>
+            <c:if test="${count > 0}">
+                <input type="submit" value="Delete">
+            </c:if>
         </form>
 
     </body>

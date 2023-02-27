@@ -58,9 +58,10 @@ public class ShoppingListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
+        HttpSession session = request.getSession();
         String username = (String) session.getAttribute("username");
         String action = request.getParameter("action");
+int count = 0;
 
         if (action != null && action.equals("logout")) {
             session.invalidate();
@@ -83,9 +84,15 @@ public class ShoppingListServlet extends HttpServlet {
         if (items == null) {
             items = new ArrayList<String>();
             session.setAttribute("items", items);
+            count = 0;
+            //session.setAttribute("count", count);
             getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
                     .forward(request, response);
+        } else {
+            count = items.size();
+            
         }
+       session.setAttribute("count", count);
     }
 
     /**
@@ -103,7 +110,7 @@ public class ShoppingListServlet extends HttpServlet {
         String username = request.getParameter("username");
         String action = request.getParameter("action");
 
-        if (action.equals("register")) {
+        if (action != null &&  action.equals("register")) {
             if (username != null && !username.isEmpty()) {
                 // store the username in a session variable
                 session.setAttribute("username", username);
@@ -118,10 +125,11 @@ public class ShoppingListServlet extends HttpServlet {
                         .forward(request, response);
             }
 
-        } else if (action.equals("addItem")) {
+        } else if (action != null && action.equals("addItem")) {
             String addItem = request.getParameter("addItem");
+            ArrayList<String> items = (ArrayList<String>) session.getAttribute("items");
             if (addItem != null && !addItem.isEmpty()) {
-                ArrayList<String> items = (ArrayList<String>) session.getAttribute("items");
+                
                 items.add(addItem);
                 session.setAttribute("items", items);
                 getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
