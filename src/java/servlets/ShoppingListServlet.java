@@ -85,14 +85,14 @@ int count = 0;
             items = new ArrayList<String>();
             session.setAttribute("items", items);
             count = 0;
-            //session.setAttribute("count", count);
+            session.setAttribute("count", count);
             getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
                     .forward(request, response);
         } else {
             count = items.size();
-            
+            session.setAttribute("count", count);
         }
-       session.setAttribute("count", count);
+       
     }
 
     /**
@@ -140,6 +140,12 @@ int count = 0;
                 getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
                         .forward(request, response);
             }
+        } else if (action != null && action.equals("delete")){
+            String selectItem = request.getParameter("selectItem");
+            ArrayList<String> items = (ArrayList<String>) session.getAttribute("items");
+            items.remove(selectItem);
+            getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
+                        .forward(request, response);
         }
 
     }
