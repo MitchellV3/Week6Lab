@@ -17,6 +17,7 @@
         <p>${welcomeMessage}</p>
         <a href="?action=logout">Log out</a>
         <h2>List</h2>
+                    <p style="color:red;">${errorMessage}</p>
         <form method="post" action="?action=addItem">
             <label for="username">Add item:</label>
             <input type="text" name="addItem" id="addItem">

@@ -114,7 +114,6 @@ public class ShoppingListServlet extends HttpServlet {
             } else {
                 // username is empty, display an error message and forward to login.jsp
                 request.setAttribute("errorMessage", "Please enter username");
-                request.setAttribute("username", username);
                 getServletContext().getRequestDispatcher("/WEB-INF/register.jsp")
                         .forward(request, response);
             }
@@ -123,10 +122,13 @@ public class ShoppingListServlet extends HttpServlet {
             String addItem = request.getParameter("addItem");
             if (addItem != null && !addItem.isEmpty()) {
                 ArrayList<String> items = (ArrayList<String>) session.getAttribute("items");
-               
-
                 items.add(addItem);
                 session.setAttribute("items", items);
+                getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
+                        .forward(request, response);
+            }
+            else{
+                request.setAttribute("errorMessage", "Please add an item");
                 getServletContext().getRequestDispatcher("/WEB-INF/shoppingList.jsp")
                         .forward(request, response);
             }
